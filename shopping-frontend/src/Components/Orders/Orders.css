@@ -1,0 +1,53 @@
+.orders {
+  list-style: none;
+  padding: 0;
+  margin: 2%;
+}
+
+.orders__item > h1 {
+  font-size: 1rem;
+}
+
+.orders__item {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.26);
+  padding: 1rem;
+  background-color: #fff;
+  margin-bottom: 1rem;
+}
+
+.orders__products {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.orders__products-item {
+  margin: 0.5rem 0;
+  padding: 0.5rem;
+  border: 1px solid #00695c;
+  color: #000;
+  font-weight: 400;
+}
+
+.orders__products-item__quantity {
+  color: rgb(52, 18, 204);
+  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+}
+
+.orders__item__header {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  font-weight: 500;
+}
+
+.orders__item__header > div > .btn {
+  font-size: 1.3vw;
+  font-weight: bold;
+  color: rgb(13, 111, 114);
+  text-decoration: none;
+}
+
+.orders__item__header > div > .btn:hover {
+  color: blue;
+}

@@ -1,0 +1,23 @@
+.signup__body {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  background-color: #fff;
+  margin-top: 70px;
+  height: auto;
+  width: 50vw;
+  box-shadow: -1px 4px 20px -6px rgba(0, 0, 0, 0.75);
+}
+
+.signup {
+  display: grid;
+  place-items: center;
+  height: 70vh;
+}
+
+Form {
+  width: 90%;
+  padding: 20px;
+  margin-bottom: 2%;
+}
+

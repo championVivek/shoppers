@@ -1,0 +1,29 @@
+.EditProduct {
+    display: grid;
+    place-items: center;
+    margin-top: 3%;
+  }
+  
+  .EditProduct__body {
+      display: flex;
+      align-items: center;
+      background-color: #fff;
+      flex-direction: column;
+      height: auto;
+      padding: 2%;
+      box-shadow: -1px 4px 20px -6px rgba(0, 0, 0, 0.75);;
+  }
+  
+  .editproduct__button {
+    margin-top: 15%;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+  }
+  
+  .editproduct__button > .btn {
+    border-radius: 0;
+    width: 50%;
+  }
+  
+  

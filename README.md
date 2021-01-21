@@ -17,3 +17,7 @@
 - Seller can Edit a product which he added.
 - Seller can delete a product.
 - Seller can view his products.
+
+## Screenshots
+
+![alt text](C:\Users\vivek\Desktop\s1.jpg)

@@ -20,4 +20,4 @@
 
 ## Screenshots
 
-![alt text](C:\Users\vivek\Desktop\s1.jpg)
+![alt text](\Desktop\s1.jpg)

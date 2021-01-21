@@ -20,4 +20,4 @@
 
 ## Screenshots
 
-![alt text](\Desktop\s1.jpg)
+![alt text](./Pictures/s1.jpg)

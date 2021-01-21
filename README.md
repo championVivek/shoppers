@@ -18,6 +18,4 @@
 - Seller can delete a product.
 - Seller can view his products.
 
-## Screenshots
 
-![alt text](./Pictures/s1.jpg)

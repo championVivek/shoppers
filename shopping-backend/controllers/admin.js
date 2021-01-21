@@ -2,7 +2,6 @@ const adminData = require("../models/adminData");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
-
 //Signup
 exports.signupAdmin = async (req, res) => {
   try {
@@ -13,8 +12,12 @@ exports.signupAdmin = async (req, res) => {
     if (!email) return res.status(400).json({ msg: "Email is required." });
     if (!password)
       return res.status(400).json({ msg: "Password is required." });
-    const user = await adminData.findOne({ email: email });
-    if (user) {
+      if (password.length < 5)
+      return res
+        .status(400)
+        .json({ msg: "Password length should be greater than 5." });
+    const admin = await adminData.findOne({ email: email });
+    if (admin) {
       return res.status(400).json({ msg: "Email already exist." });
     }
     const hashedPassword = await bcrypt.hash(password, 12);
@@ -25,7 +28,7 @@ exports.signupAdmin = async (req, res) => {
     }).save();
     res.status(200).json({ msg: "Admin created successfully" });
   } catch(err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ msg: 'Server error. Please try again later!' });
   }
 };
 
@@ -51,7 +54,7 @@ exports.loginAdmin = async (req, res) => {
         res.json({ token, user: { id: user._id, username: user.name}, isAdmin: true });
       }
     } catch (err) {
-      res.status(500).json({ error: err.message });
+      res.status(500).json({ msg: 'Server error. Please try again later!' });
     }
   };
   

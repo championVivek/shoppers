@@ -1,8 +1,5 @@
-const product = require("../models/products");
 const user = require("../models/userData");
 const PDFDocument = require("pdfkit");
-const blobStream = require("blob-stream");
-const Window = require("window");
 const path = require("path");
 const fs = require("fs");
 const Order = require("../models/order");
@@ -17,7 +14,6 @@ exports.getCheckout = async (req, res) => {
     if (!isUser) return res.status(404).json({ msg: "User not found" });
     const users = await isUser.populate("cart.items.productId").execPopulate();
     products = users.cart.items;
-    total = 0;
     products.forEach((p) => {
       total += p.quantity * p.productId.price;
     });
@@ -39,7 +35,7 @@ exports.getCheckout = async (req, res) => {
     });
     res.json({ id: session.id });
   } catch (err) {
-    console.log(err.message);
+    res.status(500).json({ msg: "Server error. Please try again later!" });
   }
 };
 
@@ -69,7 +65,7 @@ exports.postOrder = async (req, res, next) => {
       res.redirect("http://localhost:3000/myorders");
     }
   } catch (err) {
-    console.log(err.message);
+    res.status(500).json({ msg: "Server error. Please try again later!" });
   }
 };
 
@@ -83,7 +79,7 @@ exports.getOrder = async (req, res) => {
     }
     res.status(200).send(orders);
   } catch (err) {
-    res.json({ err: err.message });
+    res.status(500).json({ msg: "Server error. Please try again later!" });
   }
 };
 
@@ -108,14 +104,14 @@ exports.makeInvoice = async (req, res) => {
     const invoiceName = "invoice-" + orderId + ".pdf";
     const invoicePath = path.join("data", "invoices", invoiceName);
     const pdfDoc = new PDFDocument();
-    
+
     res.setHeader("Content-Type", "application/pdf");
     res.setHeader(
       "Content-Disposition",
       'inline: filename="' + invoiceName + '"'
-      );
-      pdfDoc.pipe(fs.createWriteStream(invoicePath));
-      pdfDoc.pipe(res);  
+    );
+    pdfDoc.pipe(fs.createWriteStream(invoicePath));
+    pdfDoc.pipe(res);
     pdfDoc.fontSize(26).text("Invoice", {
       underline: true,
     });
@@ -138,16 +134,14 @@ exports.makeInvoice = async (req, res) => {
     pdfDoc.text("--------");
     pdfDoc.fontSize(18).text("Total Price: Rs. " + totalPrice);
     pdfDoc.end();
-
   } catch (err) {
-    console.log(err.message);
+    res.status(500).json({ msg: "Server error. Please try again later!" });
   }
 };
 
-
-exports.getInvoice = (req,res) => {
-  const orderId = req.body.orderId
-  console.log(orderId);
-  res.sendFile(path.join(__dirname, '..', 'data', 'invoices', `invoice-${orderId}.pdf`))
-   
-}
+exports.getInvoice = (req, res) => {
+  const orderId = req.body.orderId;
+  res.sendFile(
+    path.join(__dirname, "..", "data", "invoices", `invoice-${orderId}.pdf`)
+  );
+};

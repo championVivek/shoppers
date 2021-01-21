@@ -1,8 +1,8 @@
 import React, { useState, useContext } from "react";
 import { Form, Button } from "react-bootstrap";
+import { ToastContainer, toast } from "react-toastify";
 import UserContext from "../../Context/userContext";
 import { Link, useHistory } from "react-router-dom";
-import ErrorNotice from "../../ErrorNotice";
 import axios from "../../../Axios";
 import "./Login.css";
 
@@ -10,12 +10,11 @@ function Login() {
   const [userEmail, setUserEmail] = useState("");
   const [userPassword, setUserPassword] = useState("");
   const { setUserData } = useContext(UserContext);
-  const [error, setError] = useState("");
   const history = useHistory();
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
     try {
+      e.preventDefault();
       const result = await axios.post("/userlogin", {
         email: userEmail,
         password: userPassword,
@@ -25,21 +24,23 @@ function Login() {
           token: result.data.token,
           user: result.data.user,
           isAdmin: result.data.isAdmin,
+          isLoggedIn: true,
         });
         localStorage.setItem("auth-token", result.data.token);
         localStorage.setItem("isAdmin", result.data.isAdmin);
         history.push("/");
-        window.location.reload(true);
+        window.location.reload(true)
       }
     } catch (err) {
-      err.response.data.msg && setError(err.response.data.msg);
+      err.response.data.msg &&
+        toast.error(err.response.data.msg, { autoClose: 2000 });
     }
   };
   return (
     <div className="login">
       <div className="login__body">
         <h1>Login</h1>
-        {error && <ErrorNotice message={error} />}
+        <ToastContainer />
         <Form onSubmit={handleSubmit}>
           <Form.Group controlId="formBasicEmail">
             <Form.Label>Email</Form.Label>

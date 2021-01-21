@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Form, Button } from "react-bootstrap";
+import { ToastContainer, toast } from "react-toastify"
 import { Link, useHistory } from "react-router-dom";
-import ErrorNotice from '../ErrorNotice'
 import axios from "../../Axios";
 import "../User/Signup/Signup.css";
 
@@ -9,9 +9,8 @@ function AdminSignup() {
   const [userName, setName] = useState("");
   const [userEmail, setEmail] = useState("");
   const [userPassword, setPassword] = useState("");
-  const [error, setError] = useState("");
   const history = useHistory();
-
+ 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -20,18 +19,17 @@ function AdminSignup() {
         email: userEmail,
         password: userPassword,
       });
-      console.log("Admin created");
       history.push("/admin/login");
     } catch(err) {
-      err.response.data.msg && setError(err.response.data.msg);
+      err.response.data.msg && toast.error(err.response.data.msg, {autoClose: 2000});
     }
   };
 
   return (
     <div className="signup">
+      <ToastContainer />
       <div className="signup__body">
         <h1>Create Seller Account</h1>
-        {error && <ErrorNotice message={error}/>}
         <Form onSubmit={handleSubmit}>
           <Form.Group>
             <Form.Label>Seller Name</Form.Label>

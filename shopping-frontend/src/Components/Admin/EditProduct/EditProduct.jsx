@@ -1,5 +1,6 @@
 import React, { useEffect, useContext, useState } from "react";
 import { Button, Form } from "react-bootstrap";
+import { ToastContainer, toast} from "react-toastify"
 import { useParams, useHistory } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import UserContext from "../../Context/userContext";
@@ -39,15 +40,17 @@ function EditProduct() {
           "content-type": "multipart/form-data",
         },
       };
-      axios.post(`/admin/${id}/editproduct`, formdata, config);
+      const isUpdated = await axios.post(`/admin/${id}/editproduct`, formdata, config);
+      toast.success(isUpdated.data.msg, {autoClose: 2000})
       history.push(`/admin/${userData.user.id}/products`);
     } catch (err) {
-      console.log(err.message);
+      toast.error(err.response.data.msg, {autoClose: 2000})
     }
   };
 
   return (
     <div className="EditProduct">
+      <ToastContainer />
       <div className="EditProduct__body">
         <h3>Edit product</h3>
         <Form onSubmit={handleSubmit(onSubmit)}>
@@ -70,7 +73,7 @@ function EditProduct() {
             />
           </Form.Group>
           <Form.Group>
-            <Form.Label>Image *</Form.Label>
+            <Form.Label>Image</Form.Label>
             <Form.File
               id="custom-file"
               label="Choose image"

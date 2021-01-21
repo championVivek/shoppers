@@ -21,7 +21,7 @@ exports.postTokenIsValid = async (req, res) => {
 
     return res.json(true);
   } catch (err) {
-    return res.status(500).json({ error: err.message });
+    res.status(500).json({ msg: "Server error. Please try again later!" });
   }
 };
 
@@ -38,6 +38,6 @@ exports.getTokenIsValid = async (req, res) => {
       .status(200)
       .json({ id: user._id, username: user.name, isAdmin: isAdmin });
   } catch (err) {
-    res.json({ error: err.message });
+    res.status(500).json({ msg: "Server error. Please try again later!" });
   }
 };

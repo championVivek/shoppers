@@ -8,14 +8,18 @@ exports.signupUser = async (req, res) => {
     const name = req.body.name;
     const email = req.body.email;
     const password = req.body.password;
+
     if (!name) return res.status(400).json({ msg: "Name is required." });
     if (!email) return res.status(400).json({ msg: "Email is required." });
     if (!password)
       return res.status(400).json({ msg: "Password is required." });
+    if (password.length < 5)
+      return res
+        .status(400)
+        .json({ msg: "Password length should be greater than 5." });
     const user = await userData.findOne({ email: email });
-    if (user) {
-      return res.status(400).json({ msg: "Email already exist." });
-    }
+    if (user) return res.status(400).json({ msg: "Email already exist." });
+
     const hashedPassword = await bcrypt.hash(password, 12);
     await new userData({
       name: name,
@@ -23,11 +27,10 @@ exports.signupUser = async (req, res) => {
       password: hashedPassword,
     }).save();
     res.status(200).json({ msg: "User created successfully" });
-  } catch(err) {
-    res.status(500).json({ error: err.message });
+  } catch (err) {
+    res.status(500).json({ msg: "Server error. Please try again later!" });
   }
 };
-
 
 //Login
 exports.loginUser = async (req, res) => {
@@ -48,9 +51,13 @@ exports.loginUser = async (req, res) => {
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
     const result = await userData.findById(user._id);
     if (result) {
-      res.json({ token, user: { id: user._id, username: user.name}, isAdmin: false });
+      res.json({
+        token,
+        user: { id: user._id, username: user.name },
+        isAdmin: false,
+      });
     }
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ msg: "Server error. Please try again later!" });
   }
 };

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Form, Button } from "react-bootstrap";
 import { Link, useHistory } from "react-router-dom";
-import ErrorNotice from '../../ErrorNotice'
+import { ToastContainer, toast } from "react-toastify";
 import axios from "../../../Axios";
 import "./Signup.css";
 
@@ -9,7 +9,6 @@ function Signup() {
   const [userName, setName] = useState("");
   const [userEmail, setEmail] = useState("");
   const [userPassword, setPassword] = useState("");
-  const [error, setError] = useState("");
   const history = useHistory();
 
   const handleSubmit = async (e) => {
@@ -20,18 +19,18 @@ function Signup() {
         email: userEmail,
         password: userPassword,
       });
-      console.log("User created");
       history.push("/login");
-    } catch(err) {
-      err.response.data.msg && setError(err.response.data.msg);
+    } catch (err) {
+      err.response.data.msg &&
+        toast.error(err.response.data.msg, { autoClose: 2000 });
     }
   };
 
   return (
     <div className="signup">
+      <ToastContainer />
       <div className="signup__body">
         <h1>Create Account</h1>
-        {error && <ErrorNotice message={error}/>}
         <Form onSubmit={handleSubmit}>
           <Form.Group>
             <Form.Label>Name</Form.Label>
@@ -49,7 +48,7 @@ function Signup() {
               onChange={(e) => setEmail(e.target.value)}
             />
           </Form.Group>
-          <Form.Group controlId="formBasicPassword">
+          <Form.Group>
             <Form.Label>Password</Form.Label>
             <Form.Control
               type="password"

@@ -5,14 +5,25 @@ exports.postCart = async (req, res) => {
   try {
     const productId = req.body.id;
     const userId = req.body.userId;
+    let products;
+    let totalQuantity = 0;
 
     const isProduct = await product.findById(productId);
     if (isProduct) {
       const isUser = await user.findById(userId);
       isUser.addToCart(isProduct);
+      const users = await isUser
+        .populate("cart.items.productId")
+        .execPopulate();
+      products = users.cart.items;
+      products.forEach((p) => {
+        totalQuantity += p.quantity;
+      });
+
+      res.status(200).json({ totalQuantity: totalQuantity });
     }
   } catch (err) {
-    console.log(err.message);
+    res.status(500).json({ msg: "Server error. Please try again later!" });
   }
 };
 
@@ -24,7 +35,7 @@ exports.getCart = async (req, res) => {
     const users = await isUser.populate("cart.items.productId").execPopulate();
     res.status(200).send(users.cart.items);
   } catch (err) {
-    console.log(err.message);
+    res.status(500).json({ msg: "Server error. Please try again later!" });
   }
 };
 
@@ -38,7 +49,6 @@ exports.totalPrice = async (req, res) => {
     if (!isUser) return res.status(404).json({ msg: "User not found" });
     const users = await isUser.populate("cart.items.productId").execPopulate();
     products = users.cart.items;
-    total = 0;
     products.forEach((p) => {
       total += p.quantity * p.productId.price;
       totalQuantity += p.quantity;
@@ -46,7 +56,7 @@ exports.totalPrice = async (req, res) => {
 
     res.status(200).json({ total: total, totalQuantity: totalQuantity });
   } catch (err) {
-    console.log(err.message);
+    res.status(500).json({ msg: "Server error. Please try again later!" });
   }
 };
 
@@ -59,8 +69,9 @@ exports.postCartDeleteProduct = async (req, res, next) => {
     if (!result) {
       return res.status(400).json({ msg: "Error deleting product" });
     }
-    res.status(200).json("Product Deleted successfully!!");
+    const users = await isUser.populate("cart.items.productId").execPopulate();
+    res.status(200).send(users.cart.items);
   } catch (err) {
-    res.status(500).json({ err: err.message });
+    res.status(500).json({ msg: "Server error. Please try again later!" });
   }
 };

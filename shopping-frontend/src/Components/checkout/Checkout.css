@@ -59,3 +59,10 @@
   opacity: 0.9;
   background-color: rgb(243, 109, 0);
 }
+
+.spinner-border {
+  position: fixed;
+  z-index: 1;
+  left: 50%;
+  top: 50%;
+}

@@ -14,6 +14,10 @@ exports.addProduct = async (req, res) => {
 
     const admin = await adminData.findById(adminId);
     if (!admin) return res.status(404).json({ msg: "Admin not found" });
+    if (!title) return res.status(404).json({ msg: "Title is required" });
+    if (!price) return res.status(404).json({ msg: "Price is required" });
+    if (!imageUrl)
+      return res.status(404).json({ msg: "Image URL is required" });
 
     await new product({
       title: title,
@@ -24,8 +28,7 @@ exports.addProduct = async (req, res) => {
 
     res.status(200).json({ msg: "Product added successfully!" });
   } catch (err) {
-    console.log(err);
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ msg: "Server error. Please try again later!" });
   }
 };
 
@@ -41,7 +44,7 @@ exports.getProducts = async (req, res) => {
     const products = await product.find({ userId: adminId });
     res.status(200).send(products);
   } catch (err) {
-    res.status(500).json({ msg: err.message });
+    res.status(500).json({ msg: "Server error. Please try again later!" });
   }
 };
 
@@ -51,28 +54,32 @@ exports.DeletProduct = async (req, res) => {
     const adminId = req.params.id;
     const productId = req.body.productId;
     let productImage;
-
+    
+    //Delete the product
     const isProduct = await product.findById(productId);
     if (!isProduct) return res.status(404).json({ msg: "Product not found" });
     productImage = isProduct.imageUrl;
-    fs.unlink(productImage, (err) => {
-      if (err) {
-        res.status(500).json({ msg: err.message });
-      }
-    });
-
     const deleteProduct = await product.deleteOne({
       _id: productId,
       userId: adminId,
     });
 
+    fs.unlink(productImage, (err) => {
+      if (err) {
+        res.status(500).json({ msg: "Error deleting image." });
+      }
+    });
+
     if (!deleteProduct) {
       return res.status(400).json({ msg: "Unable to delete product" });
     }
-    res.status(200).json({ msg: "Product deleted successfully!" });
+    //If succesful send back the products
+    const products = await product.find({ userId: adminId });
+    res
+      .status(200)
+      .json({ msg: "Product deleted successfully!", products: products });
   } catch (err) {
-    console.log(err);
-    res.status(500).json({ msg: err.message });
+    res.status(500).json({ msg: "Server error. Please try again later!" });
   }
 };
 
@@ -81,15 +88,13 @@ exports.DeletProduct = async (req, res) => {
 exports.getEditProduct = async (req, res, next) => {
   try {
     productId = req.params.id;
-
     const isProduct = await product.findById(productId);
     if (!isProduct) {
       return res.status(404).json({ msg: "Product not found" });
     }
-
     res.status(200).send(isProduct);
   } catch (err) {
-    res.status(500).json({ msg: err.message });
+    res.status(500).json({ msg: "Server error. Please try again later!" });
   }
 };
 
@@ -119,8 +124,8 @@ exports.postEditProduct = async (req, res) => {
       }
     );
     if (!updated) return res.status(400).json({ msg: "Unable to update." });
-    res.status(200).json({ msg: "Update successful." });
+    res.status(200).json({ msg: "Product updated successfully!" });
   } catch (err) {
-    res.status(500).json({ msg: err.message });
+    res.status(500).json({ msg: "Server error. Please try again later!" });
   }
 };

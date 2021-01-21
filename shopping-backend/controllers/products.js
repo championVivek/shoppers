@@ -9,6 +9,6 @@ exports.getProducts = async (req, res, next) => {
     }
     res.status(200).send(products)
   } catch (err) {
-    console.log(err.message);
+    res.status(500).json({ msg: "Server error. Please try again later!" });
   }
 };

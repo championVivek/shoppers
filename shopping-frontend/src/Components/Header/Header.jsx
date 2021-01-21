@@ -1,19 +1,18 @@
-import React, {useEffect, useContext } from "react";
-import UserContext from "../Context/userContext";
-import BasketContext from "../Context/basketContext";
+import React, { useContext } from "react";
 import { Link, useHistory } from "react-router-dom";
-import { NavDropdown } from "react-bootstrap";
+import { NavDropdown, Button } from "react-bootstrap";
 import ShoppingCartIcon from "@material-ui/icons/ShoppingCart";
 import SearchIcon from "@material-ui/icons/Search";
-import axios from "../../Axios"
+import UserContext from "../Context/userContext";
+import BasketContext from "../Context/basketContext";
 import "./Header.css";
 
 function Header() {
   const { userData, setUserData } = useContext(UserContext);
-  const { basket, setBasket } = useContext(BasketContext);
+  const { basket } = useContext(BasketContext);
   const history = useHistory();
 
-    const logout = () => {
+  const logout = () => {
     setUserData({ token: undefined, user: undefined, isAdmin: null });
     localStorage.setItem("auth-token", "");
     localStorage.setItem("isAdmin", null);
@@ -21,21 +20,13 @@ function Header() {
     window.location.reload(false);
   };
 
- 
-
   return (
     <nav className="header">
       <div className="header__brand">
         <h1>SHOPPERS</h1>
       </div>
-      <div className="header__nav">
-        <Link
-          to="/"
-          className="header__link"
-          style={{ textDecoration: "none" }}
-        >
-          Home
-        </Link>
+      <div className="header__nav__left">
+        <Link to="/">Home</Link>
       </div>
       <div className="header__search">
         <input type="text" className="header__searchInput" />
@@ -43,20 +34,12 @@ function Header() {
       </div>
       {userData.user && userData.isAdmin === "false" ? (
         <div className="header__nav">
-          <Link
-            to="/myorders"
-            className="header__link"
-            style={{ textDecoration: "none" }}
-          >
+          <Link to="/myorders">
             Orders
           </Link>
-          <Link
-            onClick={logout}
-            className="header__link"
-            style={{ textDecoration: "none" }}
-          >
+          <Button variant="link" onClick={logout}>
             Logout
-          </Link>
+          </Button>
           <div className="header__basket">
             <Link
               className="header__basket__link"
@@ -71,29 +54,23 @@ function Header() {
         <div className="header__nav">
           <Link
             to={`/admin/${userData.user.id}/products`}
-            className="header__link"
-            style={{ textDecoration: "none" }}
           >
             Products
           </Link>
           <Link
             to="/admin/add_product"
-            className="header__link"
-            style={{ textDecoration: "none" }}
           >
             Add Product
           </Link>
           <Link
             onClick={logout}
-            className="header__link"
-            style={{ textDecoration: "none" }}
           >
             Logout
           </Link>
         </div>
       ) : (
         <div className="header__nav">
-          <NavDropdown title="Login" id="basic-nav-dropdown">
+          <NavDropdown title="Login" id="basic-nav-dropdown" className="header__nav__dropdown">
             <NavDropdown.Item as={Link} to="/login">
               As User
             </NavDropdown.Item>
@@ -102,7 +79,7 @@ function Header() {
             </NavDropdown.Item>
           </NavDropdown>
 
-          <NavDropdown title="Signup" id="basic-nav-dropdown">
+          <NavDropdown title="Signup" id="basic-nav-dropdown" className="header__nav__dropdown">
             <NavDropdown.Item as={Link} to="/signup">
               As User
             </NavDropdown.Item>

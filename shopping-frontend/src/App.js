@@ -16,7 +16,9 @@ import EditProduct from "./Components/Admin/EditProduct/EditProduct";
 import Cart from "./Components/cart/Cart";
 import Checkout from "./Components/checkout/Checkout";
 import Orders from "./Components/Orders/Orders";
-import ProtectedRoute from "./ProtectedRoute";
+import ProtectedRoute from "./Components/ProtectedRoute";
+import NotFound from "./Components/NotFound/NotFound";
+import "react-toastify/dist/ReactToastify.css";
 import "./App.css";
 
 function App() {
@@ -27,14 +29,6 @@ function App() {
     isLoggedIn: false,
   });
   const [basket, setBasket] = useState(0);
-
-  const value = useMemo(
-    () => ({
-      userData,
-      setUserData,
-    }),
-    [userData]
-  );
 
   useEffect(() => {
     const checkLoggedIn = async () => {
@@ -71,6 +65,14 @@ function App() {
     }
   });
 
+  const value = useMemo(
+    () => ({
+      userData,
+      setUserData,
+    }),
+    [userData]
+  );
+
   return (
     <React.Fragment>
       <UserContext.Provider value={value}>
@@ -90,7 +92,8 @@ function App() {
             <ProtectedRoute path="/checkout" component={Checkout} />
             <ProtectedRoute path="/myorders" component={Orders} />
             <ProtectedRoute path="/basket/:id" component={Cart} />
-            <Route path="/" component={Home} />
+            <Route exact path="/" component={Home} />
+            <Route path="*" component={NotFound} />
           </Switch>
         </BasketContext.Provider>
       </UserContext.Provider>

@@ -13,7 +13,7 @@ function Cart() {
   const [cartProducts, setCartProducts] = useState([]);
   const [totalSum, setTotalSum] = useState();
   const [isLoading, setIsLoading] = useState();
-  const { userData } = useContext(UserContext);
+  const { state } = useContext(UserContext);
   const { setBasket } = useContext(BasketContext);
   const { id } = useParams();
   const history = useHistory();
@@ -35,8 +35,8 @@ function Cart() {
   };
 
   useEffect(() => {
-    if (userData.user) {
-      axios.post("/gettotal", { userId: userData.user.id }).then((totalsum) => {
+    if (state.id) {
+      axios.post("/gettotal", { userId: state.id }).then((totalsum) => {
         setBasket(totalsum.data.totalQuantity);
         setTotalSum(totalsum.data.total);
       });

@@ -1,7 +1,7 @@
 import React, { useState, useContext } from "react";
 import { Form, Button } from "react-bootstrap";
 import { Link, useHistory } from "react-router-dom";
-import { ToastContainer, toast } from "react-toastify"
+import { ToastContainer, toast } from "react-toastify";
 import UserContext from "../Context/userContext";
 import axios from "../../Axios";
 import "../User/Login/Login.css";
@@ -9,7 +9,7 @@ import "../User/Login/Login.css";
 function AdminLogin() {
   const [userEmail, setUserEmail] = useState("");
   const [userPassword, setUserPassword] = useState("");
-  const { setUserData } = useContext(UserContext);
+  const { dispatch } = useContext(UserContext);
   const history = useHistory();
 
   const handleSubmit = async (e) => {
@@ -19,20 +19,24 @@ function AdminLogin() {
         email: userEmail,
         password: userPassword,
       });
-      
+
       if (result) {
-        setUserData({
+        dispatch({
+          type: "SETUSER",
           token: result.data.token,
-          user: result.data.user,
+          id: result.data.user.id,
+          username: result.data.user.username,
           isAdmin: result.data.isAdmin,
+          isLoggedIn: true
         });
         localStorage.setItem("auth-token", result.data.token);
         localStorage.setItem("isAdmin", result.data.isAdmin);
         history.push("/");
-        window.location.reload(true)
+        window.location.reload(false);
       }
     } catch (err) {
-      err.response.data.msg && toast.error(err.response.data.msg, {autoClose: 2000});
+      err.response.data.msg &&
+        toast.error(err.response.data.msg, { autoClose: 2000 });
     }
   };
 

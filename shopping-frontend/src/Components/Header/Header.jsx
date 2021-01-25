@@ -8,12 +8,12 @@ import BasketContext from "../Context/basketContext";
 import "./Header.css";
 
 function Header() {
-  const { userData, setUserData } = useContext(UserContext);
+  const { state, dispatch } = useContext(UserContext);
   const { basket } = useContext(BasketContext);
   const history = useHistory();
 
   const logout = () => {
-    setUserData({ token: undefined, user: undefined, isAdmin: null });
+    dispatch({ type: 'SETUSER', token: undefined, id: undefined, username: undefined, isAdmin: undefined, isLoggedIn: false });
     localStorage.setItem("auth-token", "");
     localStorage.setItem("isAdmin", null);
     history.push("/");
@@ -32,7 +32,7 @@ function Header() {
         <input type="text" className="header__searchInput" />
         <SearchIcon className="header__searchIcon" />
       </div>
-      {userData.user && userData.isAdmin === "false" ? (
+      {state.id && state.isAdmin === "false" ? (
         <div className="header__nav">
           <Link to="/myorders">
             Orders
@@ -43,17 +43,17 @@ function Header() {
           <div className="header__basket">
             <Link
               className="header__basket__link"
-              to={`/basket/${userData.user.id}`}
+              to={`/basket/${state.id}`}
             >
               <ShoppingCartIcon />
               <span>{basket}</span>
             </Link>
           </div>
         </div>
-      ) : userData.user && userData.isAdmin === "true" ? (
+      ) : state.id && state.isAdmin === "true" ? (
         <div className="header__nav">
           <Link
-            to={`/admin/${userData.user.id}/products`}
+            to={`/admin/products`}
           >
             Products
           </Link>

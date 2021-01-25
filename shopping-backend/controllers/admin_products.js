@@ -35,14 +35,16 @@ exports.addProduct = async (req, res) => {
 //get Products
 exports.getProducts = async (req, res) => {
   try {
-    const adminId = req.params.id;
-
+    const adminId = req.body.id;
+    console.log(adminId);
     const admin = await adminData.findById(adminId);
+
     if (!admin) {
       return res.status(404).json({ msg: "Admin not found." });
     }
     const products = await product.find({ userId: adminId });
     res.status(200).send(products);
+    console.log(products);
   } catch (err) {
     res.status(500).json({ msg: "Server error. Please try again later!" });
   }
@@ -54,7 +56,7 @@ exports.DeletProduct = async (req, res) => {
     const adminId = req.params.id;
     const productId = req.body.productId;
     let productImage;
-    
+
     //Delete the product
     const isProduct = await product.findById(productId);
     if (!isProduct) return res.status(404).json({ msg: "Product not found" });

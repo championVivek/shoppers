@@ -9,7 +9,7 @@ import "./Orders.css";
 function Orders() {
   const [orders, setOrders] = useState([]);
   const [isLoading, setIsLoading] = useState();
-  const { userData } = useContext(UserContext);
+  const { state } = useContext(UserContext);
   
   useEffect(() => {
     getOrders();
@@ -18,7 +18,7 @@ function Orders() {
   const getOrders = async () => {
     try {
       setIsLoading(true);
-      const orders = await axios.post("/myorders", { userId: userData.user.id });
+      const orders = await axios.post("/myorders", { userId: state.id });
       setIsLoading(false);
       setOrders(orders.data);
     } catch (err) {
@@ -32,7 +32,7 @@ function Orders() {
       setIsLoading(true);
       const getpdf = await axios.post("/makeinvoice", {
         orderId: e.target.value,
-        userId: userData.user.id,
+        userId: state.id,
       });
       if (getpdf) {
         setIsLoading(true);

@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect } from "react";
 import { Switch, Route } from "react-router-dom";
-import axios from "./Axios";
+import createPersistedReducer from "use-persisted-reducer";
 
 import UserContext from "./Components/Context/userContext";
 import BasketContext from "./Components/Context/basketContext";
@@ -18,16 +18,23 @@ import Checkout from "./Components/checkout/Checkout";
 import Orders from "./Components/Orders/Orders";
 import ProtectedRoute from "./Components/ProtectedRoute";
 import NotFound from "./Components/NotFound/NotFound";
+import axios from "./Axios";
+import Reducer from "./Reducer";
 import "react-toastify/dist/ReactToastify.css";
 import "./App.css";
 
+const usePersistedReducer = createPersistedReducer("state");
+const initialState = {
+  token: undefined,
+  id: undefined,
+  username: undefined,
+  isAdmin: undefined,
+  isLoggedIn: undefined,
+};
+
 function App() {
-  const [userData, setUserData] = useState({
-    token: undefined,
-    user: undefined,
-    isAdmin: null,
-    isLoggedIn: false,
-  });
+  const [state, dispatch] = usePersistedReducer(Reducer, initialState);
+
   const [basket, setBasket] = useState(0);
 
   useEffect(() => {
@@ -39,16 +46,18 @@ function App() {
         localStorage.setItem("isAdmin", null);
         token = " ";
       }
-      const tokenRes = await axios.post("/tokenisvalid", null, {
+      const tokenRes = await axios.post("/posttokenisvalid", null, {
         headers: { "x-auth-token": token, isAdmin: isAdmin },
       });
       if (tokenRes.data) {
-        const userRes = await axios.get("/", {
+        const userRes = await axios.get("/gettokenisvalid", {
           headers: { "x-auth-token": token, isAdmin: isAdmin },
         });
-        setUserData({
-          token,
-          user: userRes.data,
+        dispatch({
+          type: "SETUSER",
+          token: token,
+          id: userRes.data.id,
+          username: userRes.data.username,
           isAdmin: userRes.data.isAdmin,
           isLoggedIn: true,
         });
@@ -58,24 +67,16 @@ function App() {
   }, []);
 
   useEffect(() => {
-    if (userData.user) {
-      axios.post("/gettotal", { userId: userData.user.id }).then((totalsum) => {
+    if (state.isAdmin === false) {
+      axios.post("/gettotal", { userId: state.id }).then((totalsum) => {
         setBasket(totalsum.data.totalQuantity);
       });
     }
   });
 
-  const value = useMemo(
-    () => ({
-      userData,
-      setUserData,
-    }),
-    [userData]
-  );
-
   return (
     <React.Fragment>
-      <UserContext.Provider value={value}>
+      <UserContext.Provider value={{ state, dispatch }}>
         <BasketContext.Provider value={{ basket, setBasket }}>
           <Header />
           <Switch>
@@ -84,7 +85,7 @@ function App() {
             <Route path="/admin/signup" component={AdminSignup} />
             <Route path="/admin/login" component={AdminLogin} />
             <ProtectedRoute path="/admin/add_product" component={AddProduct} />
-            <ProtectedRoute path="/admin/:id/products" component={Products} />
+            <ProtectedRoute path="/admin/products" component={Products} />
             <ProtectedRoute
               path="/admin/:id/editproduct"
               component={EditProduct}

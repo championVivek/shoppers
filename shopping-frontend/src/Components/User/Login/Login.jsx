@@ -9,7 +9,7 @@ import "./Login.css";
 function Login() {
   const [userEmail, setUserEmail] = useState("");
   const [userPassword, setUserPassword] = useState("");
-  const { setUserData } = useContext(UserContext);
+  const { dispatch } = useContext(UserContext);
   const history = useHistory();
 
   const handleSubmit = async (e) => {
@@ -20,16 +20,18 @@ function Login() {
         password: userPassword,
       });
       if (result) {
-        setUserData({
+        dispatch({
+          type: "SETUSER",
           token: result.data.token,
-          user: result.data.user,
+          id: result.data.id,
+          username: result.data.username,
           isAdmin: result.data.isAdmin,
           isLoggedIn: true,
         });
         localStorage.setItem("auth-token", result.data.token);
         localStorage.setItem("isAdmin", result.data.isAdmin);
         history.push("/");
-        window.location.reload(true)
+        window.location.reload(false);
       }
     } catch (err) {
       err.response.data.msg &&

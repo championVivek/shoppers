@@ -9,14 +9,14 @@ import "./EditProduct.css";
 
 function EditProduct() {
   const [newImage, setNewImage] = useState();
-  const { userData } = useContext(UserContext);
+  const { state } = useContext(UserContext);
   const { id } = useParams();
   const { handleSubmit, setValue, register } = useForm();
   const history = useHistory();
 
   useEffect(() => {
     axios
-      .post(`/admin/${id}/geteditproduct`, { id: userData.user.id })
+      .post(`/admin/${id}/geteditproduct`, { id: state.id })
       .then((result) => {
         setValue("title", result.data.title);
         setValue("price", result.data.price);
@@ -34,7 +34,7 @@ function EditProduct() {
       formdata.append("file", newImage);
       formdata.append("title", data.title);
       formdata.append("price", data.price);
-      formdata.append("adminId", userData.user.id);
+      formdata.append("adminId", state.user.id);
       const config = {
         headers: {
           "content-type": "multipart/form-data",
@@ -42,7 +42,7 @@ function EditProduct() {
       };
       const isUpdated = await axios.post(`/admin/${id}/editproduct`, formdata, config);
       toast.success(isUpdated.data.msg, {autoClose: 2000})
-      history.push(`/admin/${userData.user.id}/products`);
+      history.push(`/admin/${state.id}/products`);
     } catch (err) {
       toast.error(err.response.data.msg, {autoClose: 2000})
     }

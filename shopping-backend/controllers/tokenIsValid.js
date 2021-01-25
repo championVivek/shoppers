@@ -28,7 +28,6 @@ exports.postTokenIsValid = async (req, res) => {
 exports.getTokenIsValid = async (req, res) => {
   try {
     const isAdmin = req.header("isAdmin");
-
     const user =
       isAdmin === "false"
         ? await userData.findById(req.user)

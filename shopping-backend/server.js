@@ -11,6 +11,8 @@ const app = express();
 
 const MONGODB_URI = `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@cluster0.yfg2i.mongodb.net/${process.env.MONGO_DEFAULT_DATABASE}?retryWrites=true&w=majority`;
 
+
+//Store Image 
 const fileStorage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, "images");
@@ -31,23 +33,30 @@ const fileFilter = (req, file, cb) => {
     cb(null, false);
   }
 };
-app.disable("x-powered-by"); // hiding express from users
+app.use(express.static(path.join(__dirname, "build")));
 app.use("/images", express.static(path.join(__dirname, "images")));
 
 app.use(
   multer({ storage: fileStorage, fileFilter: fileFilter }).single("file")
-);
-app.use(compression());
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cors());
-app.use(require("./routes/product"));
-app.use(require("./routes/user"));
-app.use(require("./routes/admin"));
-app.use(require("./routes/tokenIsValid"));
-app.use(require("./routes/cart"));
-app.use(require("./routes/order"));
-app.use(require("./routes/admin_products"));
+  );
+  app.disable("x-powered-by"); // hiding express from users
+  app.use(compression());
+  app.use(bodyParser.json());
+  app.use(bodyParser.urlencoded({ extended: false }));
+  app.use(cors());
+  
+  //Routes
+  app.use(require("./routes/product"));
+  app.use(require("./routes/user"));
+  app.use(require("./routes/admin"));
+  app.use(require("./routes/tokenIsValid"));
+  app.use(require("./routes/cart"));
+  app.use(require("./routes/order"));
+  app.use(require("./routes/admin_products"));
+  app.use((req, res, next) => {
+    res.sendFile(path.join(__dirname, "build", "index.html"));
+  });
+
 
 const PORT = process.env.PORT || 4000;
 

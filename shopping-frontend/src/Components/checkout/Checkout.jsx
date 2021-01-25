@@ -21,16 +21,16 @@ function Checkout() {
   const [cartProducts, setCartProducts] = useState([]);
   const [totalSum, setTotalSum] = useState();
   const [isLoading, setIsLoading] = useState();
-  const { userData } = useContext(UserContext);
+  const { state } = useContext(UserContext);
   const history = useHistory();
 
   useEffect(() => {
     setIsLoading(true);
-    axios.post("/getcart", { userId: userData.user.id }).then((product) => {
+    axios.post("/getcart", { userId: state.id }).then((product) => {
       setIsLoading(false);
       setCartProducts(product.data);
     });
-    axios.post("/gettotal", { userId: userData.user.id }).then((totalsum) => {
+    axios.post("/gettotal", { userId: state.id }).then((totalsum) => {
       setTotalSum(totalsum.data.total);
     });
   }, []);
@@ -45,7 +45,7 @@ function Checkout() {
         return;
       }
       setIsLoading(true);
-      const res = await axios.post("/checkout", { userId: userData.user.id });
+      const res = await axios.post("/checkout", { userId: state.id });
       const clientSecret = res.data.id;
       setIsLoading(true);
       const result = await stripe.redirectToCheckout({

@@ -11,7 +11,7 @@ function AddProduct() {
   const [price, setPrice] = useState("");
   const [image, setImage] = useState();
   const [isLoading, setIsLoading] = useState();
-  const { userData } = useContext(UserContext);
+  const { state } = useContext(UserContext);
   const history = useHistory();
 
   const fileUpload = (e) => {
@@ -26,7 +26,7 @@ function AddProduct() {
       formdata.append("file", image);
       formdata.append("title", title);
       formdata.append("price", price);
-      formdata.append("id", userData.user.id);
+      formdata.append("id", state.id);
       const config = {
         headers: {
           "content-type": "multipart/form-data",
@@ -35,7 +35,7 @@ function AddProduct() {
       setIsLoading(true);
       await axios.post("/addproducts", formdata, config);
       setIsLoading(false);
-      history.push(`/admin/${userData.user.id}/products`);
+      history.push(`/admin/products`);
     } catch (err) {
       err.response.data.msg &&
         toast.error(err.response.data.msg, { autoClose: 2000 });

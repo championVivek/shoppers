@@ -72,6 +72,7 @@ exports.postOrder = async (req, res, next) => {
 exports.getOrder = async (req, res) => {
   try {
     const userId = req.body.userId;
+    console.log(userId);
     const orders = await Order.find({ "user.userId": userId });
 
     if (!orders) {

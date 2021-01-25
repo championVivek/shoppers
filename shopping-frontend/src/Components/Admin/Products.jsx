@@ -1,16 +1,16 @@
 import { Card, Button, CardGroup, Spinner } from "react-bootstrap";
 import React, { useState, useEffect, useContext } from "react";
 import { ToastContainer, toast } from "react-toastify";
-import NumberFormat from 'react-number-format';
+import NumberFormat from "react-number-format";
 import { useHistory } from "react-router-dom";
 import UserContext from "../Context/userContext";
 import axios from "../../Axios";
 import "./products.css";
 
 function Products() {
-  const [products, setProducts] = useState([]);
+  const [allProducts, setAllProducts] = useState([]);
   const [isLoading, setIsLoading] = useState();
-  const { userData } = useContext(UserContext);
+  const { state } = useContext(UserContext);
   const history = useHistory();
 
   useEffect(() => {
@@ -20,9 +20,9 @@ function Products() {
   const fetchProducts = async () => {
     try {
       setIsLoading(true);
-      const product = await axios.post(`admin/${userData.user.id}/products`);
+      const products = await axios.post("admin/products", { id: state.id });
       setIsLoading(false);
-      setProducts(product.data);
+      setAllProducts(products.data);
     } catch (err) {
       err.response.data.msg &&
         toast.error(err.response.data.msg, { autoClose: 2000 });
@@ -33,13 +33,13 @@ function Products() {
     try {
       setIsLoading(true);
       const deleteProduct = await axios.post(
-        `admin/${userData.user.id}/deleteproducts`,
+        `admin/${state.id}/deleteproducts`,
         {
           productId: e.target.value,
         }
       );
       setIsLoading(false);
-      setProducts(deleteProduct.data.products);
+      setAllProducts(deleteProduct.data.products);
       toast.success(deleteProduct.data.msg, { autoClose: 2000 });
     } catch (err) {
       err.response.data.msg &&
@@ -60,11 +60,11 @@ function Products() {
       ) : (
         <div className="products__list">
           <ToastContainer />
-          {products.length <= 0 ? (
+          {allProducts.length <= 0 ? (
             <h1>No products</h1>
           ) : (
             <CardGroup>
-              {products.map((data, index) => (
+              {allProducts.map((data, index) => (
                 <Card key={index}>
                   <Card.Img
                     variant="top"
@@ -72,7 +72,15 @@ function Products() {
                   />
                   <Card.Body>
                     <Card.Title>{data.title}</Card.Title>
-                    <Card.Text>Price: <NumberFormat value={data.price} displayType={'text'} thousandSeparator={true} prefix={'₹'} /></Card.Text>
+                    <Card.Text>
+                      Price:{" "}
+                      <NumberFormat
+                        value={data.price}
+                        displayType={"text"}
+                        thousandSeparator={true}
+                        prefix={"₹"}
+                      />
+                    </Card.Text>
                     <div className="card__buttons">
                       <Button
                         variant="danger"

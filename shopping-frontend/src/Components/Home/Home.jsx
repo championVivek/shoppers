@@ -13,7 +13,7 @@ import "./Home.css";
 function Home() {
   const [details, setDetails] = useState([]);
   const [isLoading, setIsLoading] = useState();
-  const { userData } = useContext(UserContext);
+  const { state } = useContext(UserContext);
   const { setBasket } = useContext(BasketContext);
   const history = useHistory();
 
@@ -34,7 +34,7 @@ function Home() {
   };
 
   const addToBasket = (e) => {
-    if (userData.isAdmin === "true" || userData.user === undefined) {
+    if (state.isAdmin === "true" || state.id === undefined) {
       toast.dark("You have to Login as user to buy an item!", {
         autoClose: 3000,
         position: toast.POSITION.TOP_CENTER,
@@ -42,7 +42,7 @@ function Home() {
     } else {
       setIsLoading(true);
       axios
-        .post("/cart", { id: e.target.value, userId: userData.user.id })
+        .post("/cart", { id: e.target.value, userId: state.id })
         .then((result) => {
           setIsLoading(false);
           setBasket(result.data.totalQuantity);
@@ -51,7 +51,7 @@ function Home() {
   };
 
   const buyNow = (e) => {
-    if (userData.isAdmin === "true" || userData.user === undefined) {
+    if (state.isAdmin === "true" || state.id === undefined) {
       toast.dark("You have to Login as user to buy an item!", {
         autoClose: 3000,
         position: toast.POSITION.TOP_CENTER,
@@ -59,10 +59,10 @@ function Home() {
     } else {
       setIsLoading(true);
       axios
-        .post("/cart", { id: e.target.value, userId: userData.user.id })
+        .post("/cart", { id: e.target.value, userId: state.id })
         .then((result) => {
           setIsLoading(false);
-          history.push(`/basket/${userData.user.id}`);
+          history.push(`/basket/${state.id}`);
         });
     }
   };
@@ -70,7 +70,7 @@ function Home() {
   return (
     <React.Fragment>
       {isLoading ? (
-        <Spinner animation="border" role="status" variant="warning">
+        <Spinner animation="border" role="status" variant="info">
           <span className="sr-only">Loading...</span>
         </Spinner>
       ) : (

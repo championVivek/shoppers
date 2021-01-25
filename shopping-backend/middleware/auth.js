@@ -1,13 +1,13 @@
 const jwt = require("jsonwebtoken");
 
-exports.auth = (req, res, next) => {
+exports.auth = async (req, res, next) => {
   try {
       const token = req.header('x-auth-token')
     if (!token)
       return res
         .status(401)
         .json({ msg: "No authentication token, authorization denied." });
-    const verified = jwt.verify(token, process.env.JWT_SECRET);
+    const verified = await jwt.verify(token, process.env.JWT_SECRET);
     if (!verified)
       return res
         .status(401)
@@ -15,6 +15,6 @@ exports.auth = (req, res, next) => {
     req.user = verified.id;
     next();
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ msg: "Server error. Please try again later!" });
   }
 };

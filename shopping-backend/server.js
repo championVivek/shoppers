@@ -33,7 +33,7 @@ const fileFilter = (req, file, cb) => {
     cb(null, false);
   }
 };
-app.use(express.static(path.join(__dirname, "build")));
+// app.use(express.static(path.join(__dirname, "build")));
 app.use("/images", express.static(path.join(__dirname, "images")));
 
 app.use(
@@ -53,9 +53,9 @@ app.use(
   app.use(require("./routes/cart"));
   app.use(require("./routes/order"));
   app.use(require("./routes/admin_products"));
-  app.use((req, res, next) => {
-    res.sendFile(path.join(__dirname, "build", "index.html"));
-  });
+  // app.use((req, res, next) => {
+  //   res.sendFile(path.join(__dirname, "build", "index.html"));
+  // });
 
 
 const PORT = process.env.PORT || 4000;

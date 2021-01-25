@@ -36,7 +36,6 @@ exports.addProduct = async (req, res) => {
 exports.getProducts = async (req, res) => {
   try {
     const adminId = req.body.id;
-    console.log(adminId);
     const admin = await adminData.findById(adminId);
 
     if (!admin) {
@@ -44,7 +43,6 @@ exports.getProducts = async (req, res) => {
     }
     const products = await product.find({ userId: adminId });
     res.status(200).send(products);
-    console.log(products);
   } catch (err) {
     res.status(500).json({ msg: "Server error. Please try again later!" });
   }
